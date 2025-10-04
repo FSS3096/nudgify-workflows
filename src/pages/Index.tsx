@@ -3,8 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { GitBranch, Users, Bell, BarChart, CheckCircle2, Clock, Shield } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
+import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
+  const { user } = useAuth();
+
   return (
     <div className="min-h-screen bg-gradient-hero">
       <Navigation />
@@ -32,16 +35,26 @@ const Index = () => {
           </p>
           
           <div className="flex items-center justify-center gap-4 pt-4">
-            <Link to="/contributor">
-              <Button size="lg" className="bg-primary hover:bg-primary/90 shadow-glow text-lg px-8">
-                Contributor Dashboard
-              </Button>
-            </Link>
-            <Link to="/maintainer">
-              <Button size="lg" variant="outline" className="border-primary/50 hover:border-primary text-lg px-8">
-                Maintainer View
-              </Button>
-            </Link>
+            {user ? (
+              <>
+                <Link to="/contributor">
+                  <Button size="lg" className="bg-primary hover:bg-primary/90 shadow-glow text-lg px-8">
+                    Contributor Dashboard
+                  </Button>
+                </Link>
+                <Link to="/maintainer">
+                  <Button size="lg" variant="outline" className="border-primary/50 hover:border-primary text-lg px-8">
+                    Maintainer View
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <Link to="/auth">
+                <Button size="lg" className="bg-primary hover:bg-primary/90 shadow-glow text-lg px-8">
+                  Get Started
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </section>
