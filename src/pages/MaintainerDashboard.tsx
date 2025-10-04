@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -6,13 +7,34 @@ import { AlertCircle, CheckCircle2, Clock, XCircle } from "lucide-react";
 import { IssueCard } from "@/components/IssueCard";
 import { Navigation } from "@/components/Navigation";
 import { mockIssues } from "@/lib/mockData";
+import { useAuth } from "@/hooks/useAuth";
 
 const MaintainerDashboard = () => {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
   const [issues] = useState(mockIssues);
   const activeIssues = issues.filter(i => i.status === "active");
   const staleIssues = issues.filter(i => i.status === "stale");
   const releasedIssues = issues.filter(i => i.status === "released");
   const unclaimedIssues = issues.filter(i => !i.claimedBy);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate("/auth");
+    }
+  }, [user, loading, navigate]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-background">

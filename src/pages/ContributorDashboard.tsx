@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -6,11 +7,32 @@ import { Bell, GitBranch, Clock, CheckCircle2 } from "lucide-react";
 import { IssueCard } from "@/components/IssueCard";
 import { Navigation } from "@/components/Navigation";
 import { mockIssues } from "@/lib/mockData";
+import { useAuth } from "@/hooks/useAuth";
 
 const ContributorDashboard = () => {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
   const [issues] = useState(mockIssues);
   const myClaimedIssues = issues.filter(i => i.claimedBy === "current-user");
   const availableIssues = issues.filter(i => !i.claimedBy);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate("/auth");
+    }
+  }, [user, loading, navigate]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-background">
